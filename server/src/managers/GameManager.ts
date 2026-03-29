@@ -5,6 +5,7 @@ export type Game = {
   code: string;
   ownerId: string;
   questions: any[];
+  players: string[];
 };
 
 class GameManager {
@@ -19,6 +20,7 @@ class GameManager {
       code,
       ownerId,
       questions,
+      players: [ownerId],
     };
 
     this.games.set(game.id, game);
@@ -46,6 +48,11 @@ class GameManager {
     }
 
     return code;
+  }
+  joinGame(game: Game, userId: string) {
+    if (!game.players.includes(userId)) {
+      game.players.push(userId);
+    }
   }
 }
 

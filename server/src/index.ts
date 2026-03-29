@@ -2,6 +2,8 @@ import { WebSocketServer } from 'ws';
 import { logSuccess } from './utils/logger';
 import { handleReg } from './handlers/handleReg';
 import { handleCreateGame } from './handlers/handleCreateGame';
+import { ClientMessageType, ServerMessageType } from './types';
+import { handleJoinGame } from './handlers/handleJoinGame';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
@@ -20,18 +22,22 @@ wss.on('connection', (ws) => {
       const { type, data } = parsed;
 
       switch (type) {
-        case 'reg':
+        case ClientMessageType.REG:
           handleReg(ws, data);
           break;
 
-        case 'create_game':
+        case ClientMessageType.CREATE_GAME:
           handleCreateGame(ws, data);
+          break;
+
+        case ClientMessageType.JOIN_GAME:
+          handleJoinGame(ws, data);
           break;
 
         default:
           ws.send(
             JSON.stringify({
-              type: 'error',
+              type: ServerMessageType.ERROR,
               data: { message: 'Unknown type' },
               id: 0,
             }),
@@ -40,7 +46,7 @@ wss.on('connection', (ws) => {
     } catch (error) {
       ws.send(
         JSON.stringify({
-          type: 'error',
+          type: ServerMessageType.ERROR,
           data: { message: 'Invalid JSON' },
           id: 0,
         }),

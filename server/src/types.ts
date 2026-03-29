@@ -37,11 +37,11 @@ export interface User {
   ws?: WebSocket;
 }
 
-export interface WSMessage {
-  type: string;
-  data: any;
+export type WSMessage<T extends keyof ServerMessageMap> = {
+  type: T;
+  data: ServerMessageMap[T];
   id: number;
-}
+};
 
 export interface RegData {
   name: string;
@@ -160,4 +160,25 @@ export interface PlayerResult {
   correct: boolean;
   pointsEarned: number;
   totalScore: number;
+}
+
+export enum ServerMessageType {
+  ERROR = 'error',
+  REG = 'reg',
+  GAME_CREATED = 'game_created',
+  GAME_JOINED = 'game_joined',
+}
+
+export interface ServerMessageMap {
+  [ServerMessageType.ERROR]: ErrorMessage;
+  [ServerMessageType.REG]: RegResponse;
+  [ServerMessageType.GAME_CREATED]: GameCreatedResponse;
+  [ServerMessageType.GAME_JOINED]: GameJoinedResponse;
+}
+export enum ClientMessageType {
+  REG = 'reg',
+  CREATE_GAME = 'create_game',
+  JOIN_GAME = 'join_game',
+  START_GAME = 'start_game',
+  ANSWER = 'answer',
 }

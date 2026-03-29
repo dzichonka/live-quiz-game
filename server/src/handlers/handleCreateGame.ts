@@ -1,56 +1,32 @@
 import { gameManager } from '../managers/GameManager';
 import { connectionManager } from '../managers/ConnectionManager';
-import { CreateGameData } from '../types';
+import { CreateGameData, ServerMessageType } from '../types';
 import { WebSocket } from 'ws';
-import { randomUUID } from 'crypto';
+import { sendMessage } from '../utils/sendMessage';
 
 export function handleCreateGame(ws: WebSocket, data: CreateGameData) {
   const userId = connectionManager.findUserByWS(ws);
 
-  const id = randomUUID();
-
   if (!userId) {
-    ws.send(
-      JSON.stringify({
-        type: 'game_created',
-        data: {
-          error: true,
-          errorText: 'Unauthorized',
-        },
-        id: id,
-      }),
-    );
+    sendMessage(ws, ServerMessageType.ERROR, {
+      message: 'User not registered',
+    });
     return;
   }
 
   const { questions } = data;
 
   if (!Array.isArray(questions) || questions.length === 0) {
-    ws.send(
-      JSON.stringify({
-        type: 'game_created',
-        data: {
-          error: true,
-          errorText: 'Invalid questions',
-        },
-        id: id,
-      }),
-    );
+    sendMessage(ws, ServerMessageType.ERROR, {
+      message: 'At least one question is required',
+    });
     return;
   }
 
   const game = gameManager.createGame(userId, questions);
-
-  ws.send(
-    JSON.stringify({
-      type: 'game_created',
-      data: {
-        code: game.code,
-        error: false,
-        errorText: '',
-      },
-      id: id,
-    }),
-  );
+  sendMessage(ws, ServerMessageType.GAME_CREATED, {
+    gameId: game.id,
+    code: game.code,
+  });
   console.log(`Game created with code: ${game.code} by user: ${userId}`);
 }

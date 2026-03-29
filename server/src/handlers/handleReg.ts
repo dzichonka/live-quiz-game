@@ -1,7 +1,8 @@
-import { RegData } from '../types';
+import { ServerMessageType, RegData } from '../types';
 import { WebSocket } from 'ws';
 import { connectionManager } from '../managers/ConnectionManager';
 import { userManager } from '../managers/UserManager';
+import { sendMessage } from '../utils/sendMessage';
 
 export function handleReg(ws: WebSocket, data: RegData) {
   const { name, password } = data;
@@ -10,16 +11,10 @@ export function handleReg(ws: WebSocket, data: RegData) {
 
   connectionManager.add(user.index, ws);
 
-  ws.send(
-    JSON.stringify({
-      type: 'reg',
-      data: {
-        name: user.name,
-        index: user.index,
-        error: false,
-        errorText: '',
-      },
-      id: 0,
-    }),
-  );
+  sendMessage(ws, ServerMessageType.REG, {
+    name: user.name,
+    index: user.index,
+    error: false,
+    errorText: '',
+  });
 }
