@@ -1,6 +1,7 @@
 import { WebSocketServer } from 'ws';
 import { logSuccess } from './utils/logger';
 import { handleReg } from './handlers/handleReg';
+import { handleCreateGame } from './handlers/handleCreateGame';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
@@ -21,6 +22,10 @@ wss.on('connection', (ws) => {
       switch (type) {
         case 'reg':
           handleReg(ws, data);
+          break;
+
+        case 'create_game':
+          handleCreateGame(ws, data);
           break;
 
         default:
