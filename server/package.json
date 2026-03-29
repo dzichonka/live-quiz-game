@@ -15,7 +15,7 @@
     "quiz",
     "server"
   ],
-  "author": "",
+  "author": "Anna Vasilevich",
   "license": "ISC",
   "dependencies": {
     "ws": "^8.18.0",
@@ -24,6 +24,7 @@
   "devDependencies": {
     "@types/node": "^24.0.0",
     "@types/ws": "^8.5.13",
+    "prettier": "^3.8.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
